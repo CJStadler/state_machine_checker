@@ -3,7 +3,9 @@ RSpec.describe StateMachineChecker do
     expect(StateMachineChecker::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
+  it "checks a simple macine" do
+    formula = AG prop(:present?)
+    result = check_satisfied(formula, -> { SimpleMachine.new })
+    expect(result).to be_satisfied
   end
 end
