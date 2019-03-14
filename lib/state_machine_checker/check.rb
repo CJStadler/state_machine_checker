@@ -2,7 +2,7 @@
 class StateMachineChecker::Check
   def initialize(formula, model_generator)
     @formula = formula
-    @model_generator = model
+    @model_generator = model_generator
   end
 
   def satisfied?
