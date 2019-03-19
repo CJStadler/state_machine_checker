@@ -21,6 +21,7 @@ module StateMachineChecker
 
       # States of the model that satisfy all sub-formulae.
       #
+      # @param [KripkeStructure] model
       # @return [Enumerator]
       def satisfying_states(model)
         subformulae

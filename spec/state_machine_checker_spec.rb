@@ -4,7 +4,7 @@ RSpec.describe StateMachineChecker do
   end
 
   it "checks a simple machine" do
-    formula = atom(:present?)
+    formula = atom(:one?)
     result = check_satisfied(formula, -> { SimpleMachine.new })
     expect(result).to be_satisfied
   end

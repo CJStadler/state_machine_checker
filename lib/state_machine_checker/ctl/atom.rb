@@ -11,7 +11,7 @@ module StateMachineChecker
       #   Atom.new(->(x) { x.shipped? })
       def initialize(method_name_or_fn)
         @fn = if method_name_or_fn.respond_to?(:call)
-          fn
+          method_name_or_fn
         else
           ->(x) { x.public_send(method_name_or_fn) }
         end
