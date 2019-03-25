@@ -22,6 +22,30 @@ module StateMachineChecker
       end
     end
 
+    # Enumerate the states.
+    #
+    # @return [Enumerator] an enumerator over the names of the states.
+    def states
+      seen = Set.new
+
+      Enumerator.new do |yielder|
+        seen << initial
+        yielder << initial
+
+        transitions.each do |transition|
+          unless seen.include?(transition.from)
+            seen << transition.from
+            yielder << transition.from
+          end
+
+          unless seen.include?(transition.to)
+            seen << transition.to
+            yielder << transition.to
+          end
+        end
+      end
+    end
+
     private
 
     attr_reader :initial, :transitions

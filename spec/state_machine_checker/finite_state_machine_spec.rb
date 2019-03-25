@@ -1,5 +1,7 @@
 require "./lib/state_machine_checker/finite_state_machine.rb"
 require "./lib/state_machine_checker/transition.rb"
+require "./spec/machines/simple_machine.rb"
+require "./spec/machines/cyclic_machine.rb"
 
 RSpec.describe StateMachineChecker::FiniteStateMachine do
   describe "#state_paths" do
@@ -34,6 +36,13 @@ RSpec.describe StateMachineChecker::FiniteStateMachine do
 
         expect(paths).to eq(a: [], b: [:ab], c: [:ab, :bc], d: [:ab, :bd])
       end
+    end
+  end
+
+  describe "#states" do
+    it "yields the name of each state" do
+      fsm = CyclicMachine.finite_state_machine
+      expect(fsm.states).to contain_exactly(:a, :b, :c, :d, :e)
     end
   end
 end
