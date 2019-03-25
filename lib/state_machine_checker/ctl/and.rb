@@ -21,12 +21,12 @@ module StateMachineChecker
 
       # States of the model that satisfy all sub-formulae.
       #
-      # @param [KripkeStructure] model
-      # @return [Enumerator]
+      # @param [LabeledMachine] model
+      # @return [Set<Symbol>]
       def satisfying_states(model)
         subformulae
           .lazy
-          .map { |f| f.satisfying_states(model) }
+          .map { |f| Set.new(f.satisfying_states(model)) }
           .reduce(:intersection)
       end
 
