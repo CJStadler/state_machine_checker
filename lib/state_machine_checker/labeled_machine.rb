@@ -1,12 +1,17 @@
 module StateMachineChecker
-  # A finite state machine where every node is mapped to a set of labels (a
-  # Kripke structure).
+  # A finite state machine where every node is mapped to a set of labels. AKA a
+  # Kripke structure.
   class LabeledMachine
     # @param [FiniteStateMachine] fsm
     # @param [Labeling] labeling
     def initialize(fsm, labeling)
       @fsm = fsm
       @labeling = labeling
+    end
+
+    # (see StateMachineChecker::FiniteStateMachine#initial_state)
+    def initial_state
+      fsm.initial_state
     end
 
     # (see StateMachineChecker::FiniteStateMachine#states)

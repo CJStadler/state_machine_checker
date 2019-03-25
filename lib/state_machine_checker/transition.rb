@@ -23,5 +23,26 @@ module StateMachineChecker
     def execute(instance)
       instance.public_send(name)
     end
+
+    def ==(other)
+      hash_attributes.all? { |attr|
+        other.respond_to?(attr) &&
+          other.public_send(attr) == public_send(attr)
+      }
+    end
+
+    def eql?(other)
+      other == self
+    end
+
+    def hash
+      hash_attributes.map(&:hash).hash
+    end
+
+    private
+
+    def hash_attributes
+      [:from, :to, :name]
+    end
   end
 end

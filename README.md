@@ -2,6 +2,10 @@
 
 Verify properties of your state machines.
 
+## Restrictions
+
+- The initial state must be set statically.
+
 ## Notes
 
 - How to construct counterexamples/witnesses?

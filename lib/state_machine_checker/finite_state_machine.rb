@@ -5,10 +5,13 @@ module StateMachineChecker
   # This class is used to limit the dependency on any particular state machine
   # library.
   class FiniteStateMachine
-    # @param [Symbol] initial the name of the initial state.
+
+    attr_reader :initial_state, :transitions
+
+    # @param [Symbol] initial_state the name of the initial state.
     # @param [Array<Transition>] transitions the transitions of the FSM.
-    def initialize(initial, transitions)
-      @initial = initial
+    def initialize(initial_state, transitions)
+      @initial_state = initial_state
       @transitions = transitions
     end
 
@@ -19,7 +22,7 @@ module StateMachineChecker
     #   state.
     def state_paths
       Enumerator.new do |yielder|
-        depth_first_search(Set.new, initial, [], yielder)
+        depth_first_search(Set.new, initial_state, [], yielder)
       end
     end
 
@@ -30,8 +33,8 @@ module StateMachineChecker
       seen = Set.new
 
       Enumerator.new do |yielder|
-        seen << initial
-        yielder << initial
+        seen << initial_state
+        yielder << initial_state
 
         transitions.each do |transition|
           unless seen.include?(transition.from)
@@ -48,8 +51,6 @@ module StateMachineChecker
     end
 
     private
-
-    attr_reader :initial, :transitions
 
     def depth_first_search(visited, state, transitions, yielder)
       yielder << [state, transitions]

@@ -1,4 +1,6 @@
 require "state_machines"
+require "./lib/state_machine_checker/finite_state_machine.rb"
+require "./lib/state_machine_checker/transition.rb"
 
 class SimpleMachine
   # Our internal representation of the state machine.
