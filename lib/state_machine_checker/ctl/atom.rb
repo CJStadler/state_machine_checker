@@ -2,9 +2,9 @@ require_relative "formula.rb"
 
 module StateMachineChecker
   module CTL
-    # An atomic proposition.
+    # An atomic proposition about a single object.
     class Atom < Formula
-      # Create an atom.
+      # @param [Symbol, Proc] method_name_or_fn
       #
       # @example
       #   Atom.new(:shipped?)
@@ -13,6 +13,7 @@ module StateMachineChecker
         @fn = if method_name_or_fn.respond_to?(:call)
           method_name_or_fn
         else
+          # Create a function which will send the given method name.
           ->(x) { x.public_send(method_name_or_fn) }
         end
       end
@@ -22,23 +23,26 @@ module StateMachineChecker
       # @example
       #   even_atom = Atom.new(:even?)
       #   even_atom.apply(6) #=> true
-      #   even_atom.appyy(7) #=> false
+      #   even_atom.apply(7) #=> false
       def apply(instance)
         fn.call(instance)
       end
 
-      # Returns an enumerator containing only self, as it is an atom.
+      # Returns an enumerator containing only this object, as it is an atom.
       #
-      # @return [Enumerator]
+      # @return [Enumerator<Atom>]
       def atoms
         [self]
       end
 
-      # States of the model that satisfy this atom.
+      # States of the machine that satisfy this atom.
       #
-      # @return [Enumerator]
-      def satisfying_states(model)
-        model.states.select { |state| state.atom_values[self] }
+      # @param [LabeledMachine] machine
+      # @return [Enumerator<Symbol>]
+      def satisfying_states(machine)
+        machine.states.select { |state|
+          machine.labels_for_state(state).include?(self)
+        }
       end
 
       private
