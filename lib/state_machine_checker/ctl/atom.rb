@@ -14,7 +14,7 @@ module StateMachineChecker
           method_name_or_fn
         else
           # Create a function which will send the given method name.
-          ->(x) { x.public_send(method_name_or_fn) }
+          method_name_or_fn.to_proc
         end
       end
 

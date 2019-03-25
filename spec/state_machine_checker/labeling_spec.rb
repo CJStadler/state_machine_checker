@@ -28,7 +28,7 @@ RSpec.describe StateMachineChecker::Labeling do
         machine = CyclicMachine.finite_state_machine
 
         state_atoms = machine.states.each_with_object({}) { |state, h|
-          h[state] = StateMachineChecker::CTL::Atom.new("#{state}?")
+          h[state] = StateMachineChecker::CTL::Atom.new("#{state}?".to_sym)
         }
         always = StateMachineChecker::CTL::Atom.new(->(x) { true })
         atoms = state_atoms.values.push(always)

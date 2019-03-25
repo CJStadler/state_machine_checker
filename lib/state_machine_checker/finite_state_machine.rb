@@ -5,7 +5,6 @@ module StateMachineChecker
   # This class is used to limit the dependency on any particular state machine
   # library.
   class FiniteStateMachine
-
     attr_reader :initial_state, :transitions
 
     # @param [Symbol] initial_state the name of the initial state.
