@@ -1,8 +1,19 @@
 # StateMachineChecker
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/state_machine_checker`. To experiment with that code, run `bin/console` for an interactive prompt.
+Verify properties of your state machines.
 
-TODO: Delete this and the text above, and describe your gem
+## Notes
+
+- How to construct counterexamples/witnesses?
+  - If we use ENF then just have witnesses.
+  - For each formula we compute a set of satisfying states. For each of these
+    states we also keep a witness path.
+  - The witness path is then built recursively?
+
+- A witness can't be a single path, but must be provided separately for each
+  subformula right?
+  - E.g. in `EF (EF p and EF q)`. `EF p` and `EF q` will have different
+    witnesses.
 
 ## Installation
 
@@ -32,7 +43,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/state_machine_checker. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/CJStadler/state_machine_checker. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
