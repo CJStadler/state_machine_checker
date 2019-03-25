@@ -14,8 +14,9 @@ module StateMachineChecker
 
     # Enumerate the states and for each provide a path to it.
     #
-    # @return [Enumerator] an enumerator where each element is a pair of a state
-    #   and an array of transitions to reach the state.
+    # @return [Enumerator<Array(Symbol, Array<Transition>)>] an enumerator where
+    #   each element is a pair of a state and an array of transitions to reach the
+    #   state.
     def state_paths
       Enumerator.new do |yielder|
         depth_first_search(Set.new, initial, [], yielder)
@@ -24,7 +25,7 @@ module StateMachineChecker
 
     # Enumerate the states.
     #
-    # @return [Enumerator] an enumerator over the names of the states.
+    # @return [Enumerator<Symbol>] an enumerator over the names of the states.
     def states
       seen = Set.new
 

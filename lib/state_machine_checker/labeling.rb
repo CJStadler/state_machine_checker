@@ -1,7 +1,7 @@
 module StateMachineChecker
   # A mapping from states to the values of each atom.
   class Labeling
-    # @param [Enumerator<Atom>] atoms the atoms which will be the labels.
+    # @param [Enumerator<CTL::Atom>] atoms the atoms which will be the labels.
     # @param [FiniteStateMachine] machine the machine to generate labels for.
     # @param [Proc] instance_generator a nullary function which returns an
     #   instance of an object in the initial state.
@@ -12,7 +12,7 @@ module StateMachineChecker
     # Get the labels for the given state.
     #
     # @param [Symbol] state
-    # @return [Set<Atom>] the atoms which are true in the state
+    # @return [Set<CTL::Atom>] the atoms which are true in the state
     def for_state(state)
       labels_by_state[state]
     end
