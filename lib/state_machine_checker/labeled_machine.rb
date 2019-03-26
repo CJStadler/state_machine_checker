@@ -19,6 +19,11 @@ module StateMachineChecker
       fsm.states
     end
 
+    # (see StateMachineChecker::FiniteStateMachine#previous_states)
+    def previous_states(state)
+      fsm.previous_states(state)
+    end
+
     # (see StateMachineChecker::Labeling#for_state)
     def labels_for_state(state)
       labeling.for_state(state)

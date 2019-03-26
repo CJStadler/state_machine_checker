@@ -45,4 +45,23 @@ RSpec.describe StateMachineChecker::FiniteStateMachine do
       expect(fsm.states).to contain_exactly(:a, :b, :c, :d, :e)
     end
   end
+
+  describe "#previous_states" do
+    it "returns the states leading directly to the given state" do
+      transitions = [
+        StateMachineChecker::Transition.new(:a, :b, :ab),
+        StateMachineChecker::Transition.new(:b, :c, :bc),
+        StateMachineChecker::Transition.new(:c, :a, :ca),
+        StateMachineChecker::Transition.new(:c, :b, :cb),
+        StateMachineChecker::Transition.new(:c, :c, :cc),
+        StateMachineChecker::Transition.new(:b, :d, :bd),
+      ]
+      fsm = described_class.new(:a, transitions)
+
+      expect(fsm.previous_states(:a)).to contain_exactly(:c)
+      expect(fsm.previous_states(:b)).to contain_exactly(:a, :c)
+      expect(fsm.previous_states(:c)).to contain_exactly(:b, :c)
+      expect(fsm.previous_states(:d)).to contain_exactly(:b)
+    end
+  end
 end

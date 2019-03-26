@@ -49,6 +49,14 @@ module StateMachineChecker
       end
     end
 
+    # The states which have a transition leading directly to the given state.
+    #
+    # @param [Symbol] state the name of the state to search from.
+    # @return [Set<Symbol>]
+    def previous_states(state)
+      Set.new(transitions.select { |t| t.to == state }.map(&:from))
+    end
+
     private
 
     def depth_first_search(visited, state, transitions, yielder)
