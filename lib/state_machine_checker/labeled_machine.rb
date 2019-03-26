@@ -24,6 +24,11 @@ module StateMachineChecker
       fsm.previous_states(state)
     end
 
+    # (see StateMachineChecker::FiniteStateMachine#predecessor_states)
+    def predecessor_states(state)
+      fsm.predecessor_states(state)
+    end
+
     # (see StateMachineChecker::Labeling#for_state)
     def labels_for_state(state)
       labeling.for_state(state)

@@ -54,10 +54,33 @@ module StateMachineChecker
     # @param [Symbol] state the name of the state to search from.
     # @return [Set<Symbol>]
     def previous_states(state)
-      Set.new(transitions.select { |t| t.to == state }.map(&:from))
+      transitions.select { |t| t.to == state }.map(&:from).to_set
+    end
+
+    # The states from which the given state is reachable.
+    #
+    # @param [Symbol] state the name of the state to search from.
+    # @return [Set<Symbol>]
+    def predecessor_states(state)
+      accumulator = Set.new
+
+      reverse_dfs(accumulator, state)
+
+      accumulator
     end
 
     private
+
+    # Add all states reachable from state to the accumulator.
+    def reverse_dfs(accumulator, state)
+      prevs = previous_states(state)
+      new = prevs - accumulator
+      accumulator.merge(new)
+
+      new.each do |s|
+        reverse_dfs(accumulator, s)
+      end
+    end
 
     def depth_first_search(visited, state, transitions, yielder)
       yielder << [state, transitions]
