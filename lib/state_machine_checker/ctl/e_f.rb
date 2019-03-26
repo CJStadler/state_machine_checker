@@ -10,10 +10,10 @@ module StateMachineChecker
       # @param [LabeledMachine] model
       # @return [Set<Symbol>]
       def satisfying_states(model)
-        subformula
-          .satisfying_states(model)
-          .flat_map { |s| model.predecessor_states(s) }
-          .to_set
+        substates = subformula.satisfying_states(model)
+        substates.each_with_object(Set.new) { |state, set|
+          set.merge(model.predecessor_states(state))
+        }.merge(substates)
       end
     end
   end

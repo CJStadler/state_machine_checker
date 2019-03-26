@@ -16,32 +16,32 @@ RSpec.describe StateMachineChecker::CTL::EF do
   end
 
   describe "#satisfying_states" do
-    it "enumerates states which have a successor satisfying the subformula" do
+    it "returns states which have a successor satisfying the subformula" do
       atom = StateMachineChecker::CTL::Atom.new(:foo?)
       ef = described_class.new(atom)
 
       labels = {
-        a: [],
-        b: [],
-        c: [atom],
-        d: [],
-        e: [atom],
+        a: Set[],
+        b: Set[atom],
+        c: Set[],
+        d: Set[atom],
+        e: Set[],
       }
 
       predecessor_states = {
-        a: [],
-        b: [:a],
-        c: [:a, :b, :c],
-        d: [:a],
-        e: [:a, :d],
+        a: Set[],
+        b: Set[:a, :b],
+        c: Set[:a, :b],
+        d: Set[:a],
+        e: Set[:a, :d],
       }
 
       machine = instance_double(StateMachineChecker::LabeledMachine)
       allow(machine).to receive(:states).and_return(labels.keys)
       allow(machine).to receive(:predecessor_states) { |s| predecessor_states[s] }
-      allow(machine).to receive(:labels_for_state) { |s| labels[s].to_set }
+      allow(machine).to receive(:labels_for_state) { |s| labels[s] }
 
-      expect(ef.satisfying_states(machine)).to contain_exactly(:a, :b, :c, :d)
+      expect(ef.satisfying_states(machine)).to contain_exactly(:a, :b, :d)
     end
   end
 end

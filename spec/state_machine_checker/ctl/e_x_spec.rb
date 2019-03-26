@@ -21,25 +21,25 @@ RSpec.describe StateMachineChecker::CTL::EX do
       ex = described_class.new(atom)
 
       labels = {
-        a: [atom],
-        b: [atom],
-        c: [],
-        d: [],
-        e: [],
+        a: Set[atom],
+        b: Set[atom],
+        c: Set[],
+        d: Set[],
+        e: Set[],
       }
 
       previous_states = {
-        a: [],
-        b: [:c, :d],
-        c: [:a],
-        d: [:b],
-        e: [:d],
+        a: Set[],
+        b: Set[:c, :d],
+        c: Set[:a],
+        d: Set[:b],
+        e: Set[:d],
       }
 
       machine = instance_double(StateMachineChecker::LabeledMachine)
       allow(machine).to receive(:states).and_return(labels.keys)
       allow(machine).to receive(:previous_states) { |s| previous_states[s] }
-      allow(machine).to receive(:labels_for_state) { |s| labels[s].to_set }
+      allow(machine).to receive(:labels_for_state) { |s| labels[s] }
 
       expect(ex.satisfying_states(machine)).to contain_exactly(:c, :d)
     end
