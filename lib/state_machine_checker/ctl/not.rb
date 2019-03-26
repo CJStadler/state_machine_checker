@@ -9,7 +9,7 @@ module StateMachineChecker
       # @param [LabeledMachine] model
       # @return [Set<Symbol>]
       def satisfying_states(model)
-        Set.new(model.states) - subformula.satisfying_states(model)
+        model.states.to_set - subformula.satisfying_states(model)
       end
     end
   end

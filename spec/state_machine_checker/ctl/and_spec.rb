@@ -32,7 +32,7 @@ RSpec.describe StateMachineChecker::CTL::And do
 
       machine = instance_double(StateMachineChecker::LabeledMachine)
       allow(machine).to receive(:states).and_return(labels.keys)
-      allow(machine).to receive(:labels_for_state) { |s| Set.new(labels[s]) }
+      allow(machine).to receive(:labels_for_state) { |s| labels[s].to_set }
 
       and1 = described_class.new([a1, a2])
       expect(and1.satisfying_states(machine)).to contain_exactly(:b, :d)

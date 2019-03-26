@@ -38,11 +38,11 @@ module StateMachineChecker
       # States of the machine that satisfy this atom.
       #
       # @param [LabeledMachine] machine
-      # @return [Enumerator<Symbol>]
+      # @return [Set<Symbol>]
       def satisfying_states(machine)
         machine.states.select { |state|
           machine.labels_for_state(state).include?(self)
-        }
+        }.to_set
       end
 
       private

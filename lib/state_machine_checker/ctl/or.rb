@@ -21,7 +21,7 @@ module StateMachineChecker
 
       # States of the model that satisfy at least one sub-formulae.
       #
-      # @return [Enumerator]
+      # @return [Set<Symbol>]
       def satisfying_states(model)
         subformulae
           .lazy

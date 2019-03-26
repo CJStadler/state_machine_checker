@@ -29,7 +29,7 @@ RSpec.describe StateMachineChecker::CTL::Not do
 
       machine = instance_double(StateMachineChecker::LabeledMachine)
       allow(machine).to receive(:states).and_return(labels.keys)
-      allow(machine).to receive(:labels_for_state) { |s| Set.new(labels[s]) }
+      allow(machine).to receive(:labels_for_state) { |s| labels[s].to_set }
 
       not1 = described_class.new(a1)
       expect(not1.satisfying_states(machine)).to contain_exactly(:b, :c)

@@ -28,7 +28,7 @@ module StateMachineChecker
       def satisfying_states(model)
         subformulae
           .lazy
-          .map { |f| Set.new(f.satisfying_states(model)) }
+          .map { |f| f.satisfying_states(model) }
           .reduce(:intersection)
       end
 
