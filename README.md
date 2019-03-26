@@ -18,6 +18,10 @@ Verify properties of your state machines.
   subformula right?
   - E.g. in `EF (EF p and EF q)`. `EF p` and `EF q` will have different
     witnesses.
+  - nuXmv just gives a witness/counterexample as a path, which isn't very
+    helpful in these cases.
+  - This is fundamental to CTL because it makes statements about trees, not
+    linear paths.
 
 ## Installation
 

@@ -6,6 +6,8 @@ module StateMachineChecker
     class And < Formula
       # Conjoin several formulae.
       #
+      # @param [Enumerator<Formula>] subformulae
+      #
       # @example
       #   And.new([Atom.new(:even?), Atom.new(:positive?)])
       def initialize(subformulae)
@@ -14,7 +16,7 @@ module StateMachineChecker
 
       # Return an enumerator over the atoms of all sub-formulae.
       #
-      # @return [Enumerator]
+      # @return [Enumerator<Atom>]
       def atoms
         subformulae.lazy.flat_map(&:atoms)
       end
