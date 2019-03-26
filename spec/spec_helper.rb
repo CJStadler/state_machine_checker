@@ -13,5 +13,5 @@ RSpec.configure do |config|
   end
 
   config.include StateMachineChecker
-  config.include StateMachineChecker::CTL
+  config.include StateMachineChecker::CTL::API
 end

@@ -1,8 +1,10 @@
 require "state_machine_checker/version"
-require "state_machine_checker/ctl"
 require "state_machine_checker/check"
 require "state_machine_checker/finite_state_machine"
+require "state_machine_checker/labeled_machine"
+require "state_machine_checker/labeling"
 require "state_machine_checker/adapters/state_machines"
+require "state_machine_checker/ctl/api"
 
 module StateMachineChecker
   def check_satisfied(formula, model_generator)
