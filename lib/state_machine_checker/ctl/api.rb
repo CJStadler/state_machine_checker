@@ -8,28 +8,16 @@ require_relative "or"
 module StateMachineChecker
   module CTL
     module API
+      def atom(method_name_or_fn)
+        Atom.new(method_name_or_fn)
+      end
+
       def EF(subformula) # rubocop:disable Naming/MethodName
         CTL::EF.new(subformula)
       end
 
       def EX(subformula) # rubocop:disable Naming/MethodName
         CTL::EX.new(subformula)
-      end
-
-      def and(*subformulae)
-        And.new(subformulae)
-      end
-
-      def atom(method_name_or_fn)
-        Atom.new(method_name_or_fn)
-      end
-
-      def not(subformula)
-        Not.new(subformula)
-      end
-
-      def or(*subformulae)
-        Or.new(subformulae)
       end
     end
   end
