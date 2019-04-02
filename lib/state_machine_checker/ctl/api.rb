@@ -2,6 +2,7 @@ require_relative "and"
 require_relative "atom"
 require_relative "e_f"
 require_relative "e_x"
+require_relative "e_g"
 require_relative "not"
 require_relative "or"
 
@@ -18,6 +19,10 @@ module StateMachineChecker
 
       def EX(subformula) # rubocop:disable Naming/MethodName
         CTL::EX.new(subformula)
+      end
+
+      def EG(subformula) # rubocop:disable Naming/MethodName
+        CTL::EG.new(subformula)
       end
     end
   end

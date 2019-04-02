@@ -14,6 +14,11 @@ module StateMachineChecker
       fsm.initial_state
     end
 
+    # (see StateMachineChecker::FiniteStateMachine#transitions)
+    def transitions
+      fsm.transitions
+    end
+
     # (see StateMachineChecker::FiniteStateMachine#states)
     def states
       fsm.states
