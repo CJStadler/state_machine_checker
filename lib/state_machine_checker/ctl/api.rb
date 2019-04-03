@@ -24,6 +24,18 @@ module StateMachineChecker
       def EG(subformula) # rubocop:disable Naming/MethodName
         CTL::EG.new(subformula)
       end
+
+      def AF(subformula) # rubocop:disable Naming/MethodName
+        CTL::EG.new(subformula.not).not
+      end
+
+      def AX(subformula) # rubocop:disable Naming/MethodName
+        CTL::EX.new(subformula.not).not
+      end
+
+      def AG(subformula) # rubocop:disable Naming/MethodName
+        CTL::EF.new(subformula.not).not
+      end
     end
   end
 end
