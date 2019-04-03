@@ -21,6 +21,8 @@ RSpec.describe StateMachineChecker do
           AG(atom(->(x) { true })),
           AF(atom(:two?)),
           AX(atom(:two?)),
+          atom(:one?).EU(atom(:two?)),
+          atom(:one?).AU(atom(:two?)),
         ]
 
         true_formulae.each do |formula|
@@ -40,6 +42,8 @@ RSpec.describe StateMachineChecker do
           EG(atom(:two?)),
           AG(EF(atom(:one?))),
           AX(atom(:one?)),
+          atom(->(x) { true }).EU(atom(->(x) { false })),
+          atom(->(x) { true }).AU(atom(->(x) { false })),
         ]
 
         false_formulae.each do |formula|

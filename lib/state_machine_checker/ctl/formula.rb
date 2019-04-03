@@ -16,6 +16,17 @@ module StateMachineChecker
       def or(*other_subformulae)
         Or.new(other_subformulae << self)
       end
+
+      # The existential until operator.
+      def EU(end_formula) # rubocop:disable Naming/MethodName
+        EU.new(self, end_formula)
+      end
+
+      def AU(end_formula) # rubocop:disable Naming/MethodName
+        end_formula.not.EU(self.or(end_formula).not)
+          .or(EG.new(end_formula.not))
+          .not
+      end
     end
   end
 end

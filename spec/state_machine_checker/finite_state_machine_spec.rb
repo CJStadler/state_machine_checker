@@ -83,4 +83,17 @@ RSpec.describe StateMachineChecker::FiniteStateMachine do
       expect(fsm.predecessor_states(:d)).to contain_exactly(:a, :b, :c)
     end
   end
+
+  context "when a predicate is provided" do
+    it "returns states from which the given state is reachable while the predicate is always true" do
+      transitions = [
+        StateMachineChecker::Transition.new(:a, :b, :ab),
+        StateMachineChecker::Transition.new(:b, :c, :bc),
+        StateMachineChecker::Transition.new(:c, :d, :cd),
+      ]
+      fsm = described_class.new(:a, transitions)
+      result = fsm.predecessor_states(:d) { |s| s == :c || s == :a }
+      expect(result).to contain_exactly(:c)
+    end
+  end
 end

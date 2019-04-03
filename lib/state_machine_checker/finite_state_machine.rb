@@ -60,11 +60,13 @@ module StateMachineChecker
     # The states from which the given state is reachable.
     #
     # @param [Symbol] state the name of the state to search from.
+    # @param [Block] &predicate optionally, only search as long as this is true.
+    #   The block is given a single argument, the state.
     # @return [Set<Symbol>]
-    def predecessor_states(state)
+    def predecessor_states(state, &predicate)
       accumulator = Set.new
 
-      reverse_dfs(accumulator, state)
+      reverse_dfs(accumulator, state, &predicate)
 
       accumulator
     end
@@ -72,13 +74,15 @@ module StateMachineChecker
     private
 
     # Add all states reachable from state to the accumulator.
-    def reverse_dfs(accumulator, state)
+    def reverse_dfs(accumulator, state, &predicate)
       prevs = previous_states(state)
       new = prevs - accumulator
-      accumulator.merge(new)
 
       new.each do |s|
-        reverse_dfs(accumulator, s)
+        if !predicate || yield(s)
+          accumulator << s
+          reverse_dfs(accumulator, s, &predicate)
+        end
       end
     end
 
