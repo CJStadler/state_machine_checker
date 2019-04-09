@@ -47,6 +47,7 @@ module StateMachineChecker
   # @param [LabeledMachine] labeled_machine
   # @return [Check]
   def check_labeled_machine_satisfied(formula, labeled_machine)
+    # TODO: check that atoms of formula match labeled_machine.
     Check.new(formula, labeled_machine)
   end
 end

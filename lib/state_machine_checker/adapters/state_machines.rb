@@ -1,4 +1,4 @@
-require "./lib/state_machine_checker/transition.rb"
+require_relative "../transition"
 
 module StateMachineChecker
   module Adapters
@@ -13,6 +13,7 @@ module StateMachineChecker
         # StateMachines::Machine#initial_state takes an instance as a parameter,
         # even when the initial state is set statically. We are assuming that
         # it is always set statically.
+        # TODO: could get this by `gem_machine.states.find(&:initial)`
         gem_machine.instance_variable_get(:@initial_state)
       end
 
