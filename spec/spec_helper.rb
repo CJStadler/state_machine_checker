@@ -15,3 +15,18 @@ RSpec.configure do |config|
   config.include StateMachineChecker
   config.include StateMachineChecker::CTL::API
 end
+
+# Helper for making transition.
+def trans(from, to, name)
+  StateMachineChecker::Transition.new(from, to, name)
+end
+
+# Helper for building a labeled machine.
+def labeled_machine(initial, transitions, labels)
+  fsm = StateMachineChecker::FiniteStateMachine.new(initial, transitions)
+
+  labeling = instance_double(StateMachineChecker::Labeling)
+  allow(labeling).to receive(:for_state) { |s| labels[s] }
+
+  StateMachineChecker::LabeledMachine.new(fsm, labeling)
+end
