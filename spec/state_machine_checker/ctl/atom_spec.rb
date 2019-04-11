@@ -27,21 +27,22 @@ RSpec.describe StateMachineChecker::CTL::Atom do
     end
   end
 
-  describe "#satisfying_states" do
-    it "enumerates the states which have this atom as a label" do
+  describe "#check" do
+    it "marks states as satisfying which have this atom as a label" do
       atom = described_class.new(:foo?)
 
-      machine = instance_double(StateMachineChecker::LabeledMachine)
-      allow(machine).to receive(:states)
-        .and_return([:a, :b])
-      allow(machine).to receive(:labels_for_state)
-        .with(:a)
-        .and_return([atom])
-      allow(machine).to receive(:labels_for_state)
-        .with(:b)
-        .and_return([described_class.new(:bar?)])
+      transitions = [trans(:a, :b, :x), trans(:a, :c, :y)]
+      labels = {
+        a: Set[atom],
+        b: Set[],
+        c: Set[],
+      }
+      machine = labeled_machine(:a, transitions, labels)
 
-      expect(atom.satisfying_states(machine)).to contain_exactly(:a)
+      result = atom.check(machine)
+      expect(result.for_state(:a)).to be_satisfied
+      expect(result.for_state(:b)).not_to be_satisfied
+      expect(result.for_state(:c)).not_to be_satisfied
     end
   end
 end

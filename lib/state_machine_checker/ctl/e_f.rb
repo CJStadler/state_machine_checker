@@ -4,16 +4,26 @@ module StateMachineChecker
   module CTL
     # The existential eventually operator.
     class EF < UnaryOperator
-      # The states from which a state which satisfies the sub-formula is
-      # reachable.
+      # Check which states of the model have as a successor a state
+      # satisfying the subformula.
       #
       # @param [LabeledMachine] model
-      # @return [Set<Symbol>]
-      def satisfying_states(model)
-        substates = subformula.satisfying_states(model)
-        substates.each_with_object(Set.new) { |state, set|
-          set.merge(model.predecessor_states(state))
-        }.merge(substates)
+      # @return [CheckResult]
+      def check(model)
+        subresult = subformula.check(model)
+        result = subresult.to_h
+        model.states.each do |state|
+          sub_state_result = subresult.for_state(state)
+
+          if sub_state_result.satisfied? # Mark predecessors as satisfied.
+            model.traverse(state, reverse: true) do |s, transitions|
+              witness = transitions + sub_state_result.witness
+              result[s] = StateResult.new(true, witness)
+            end
+          end
+        end
+
+        CheckResult.new(result)
       end
     end
   end

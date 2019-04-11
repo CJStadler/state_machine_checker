@@ -3,6 +3,7 @@ require_relative "atom"
 require_relative "e_f"
 require_relative "e_x"
 require_relative "e_g"
+require_relative "e_u"
 require_relative "not"
 require_relative "or"
 

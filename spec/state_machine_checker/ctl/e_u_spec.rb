@@ -25,25 +25,34 @@ RSpec.describe StateMachineChecker::CTL::EU do
       labels = {
         a: Set[a1],
         b: Set[a1, a2],
-        c: Set[],
-        d: Set[a1],
-        e: Set[a2],
-      }
-
-      predecessor_states = {
-        a: Set[],
-        b: Set[:a],
-        c: Set[],
+        c: Set[a1],
         d: Set[],
-        e: Set[:d],
+        e: Set[a1],
+        f: Set[a2],
+        g: Set[a1],
       }
 
-      machine = instance_double(StateMachineChecker::LabeledMachine)
-      allow(machine).to receive(:states).and_return(labels.keys)
-      allow(machine).to receive(:predecessor_states) { |s| predecessor_states[s] }
-      allow(machine).to receive(:labels_for_state) { |s| labels[s] }
+      transitions = [
+        trans(:a, :a, :aa),
+        trans(:a, :b, :ab),
+        trans(:b, :c, :bc),
+        trans(:c, :d, :cd),
+        trans(:d, :e, :de),
+        trans(:e, :f, :ef),
+        trans(:f, :g, :fg),
+        trans(:g, :g, :gg),
+      ]
 
-      expect(eu.satisfying_states(machine)).to contain_exactly(:a, :b, :d, :e)
+      machine = labeled_machine(:a, transitions, labels)
+
+      result = eu.check(machine)
+      expect(result.for_state(:a)).to have_attributes(satisfied?: true, witness: [:ab])
+      expect(result.for_state(:b)).to have_attributes(satisfied?: true, witness: [])
+      expect(result.for_state(:c)).to have_attributes(satisfied?: false, counterexample: [])
+      expect(result.for_state(:d)).to have_attributes(satisfied?: false, counterexample: [])
+      expect(result.for_state(:e)).to have_attributes(satisfied?: true, witness: [:ef])
+      expect(result.for_state(:f)).to have_attributes(satisfied?: true, witness: [])
+      expect(result.for_state(:g)).to have_attributes(satisfied?: false, counterexample: [])
     end
   end
 end

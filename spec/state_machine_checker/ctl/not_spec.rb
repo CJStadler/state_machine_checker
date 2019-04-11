@@ -2,6 +2,8 @@ require "state_machine_checker/ctl/atom"
 require "state_machine_checker/ctl/and"
 require "state_machine_checker/ctl/not"
 require "state_machine_checker/labeled_machine"
+require "state_machine_checker/check_result"
+require "state_machine_checker/state_result"
 
 RSpec.describe StateMachineChecker::CTL::Not do
   describe "#atoms" do
@@ -16,8 +18,8 @@ RSpec.describe StateMachineChecker::CTL::Not do
     end
   end
 
-  describe "#satisfying_states" do
-    it "enumerates states which do not satisfy the subformula" do
+  describe "#check" do
+    it "marks states as satisfied which are not satisfied by the subformula" do
       a1 = StateMachineChecker::CTL::Atom.new(:foo?)
       a2 = StateMachineChecker::CTL::Atom.new(:bar?)
 
@@ -32,7 +34,42 @@ RSpec.describe StateMachineChecker::CTL::Not do
       allow(machine).to receive(:labels_for_state) { |s| labels[s].to_set }
 
       not1 = described_class.new(a1)
-      expect(not1.satisfying_states(machine)).to contain_exactly(:b, :c)
+      result = not1.check(machine)
+      expect(result.for_state(:a)).to have_attributes(satisfied?: false, counterexample: [])
+      expect(result.for_state(:b)).to have_attributes(satisfied?: true, witness: [])
+      expect(result.for_state(:c)).to have_attributes(satisfied?: true, witness: [])
+    end
+
+    context "when the subformula provides a witness" do
+      it "turns witnesses into counterexamples" do
+        path = instance_double(Array)
+        sub_result = StateMachineChecker::CheckResult
+          .new(a: StateMachineChecker::StateResult.new(true, path))
+
+        subformula = instance_double(StateMachineChecker::CTL::EF)
+        allow(subformula).to receive(:check).and_return(sub_result)
+
+        model = instance_double(StateMachineChecker::LabeledMachine, states: Set[:a])
+
+        result = described_class.new(subformula).check(model)
+        expect(result.for_state(:a)).to have_attributes(satisfied?: false, counterexample: path)
+      end
+    end
+
+    context "when the subformula provides a counterexample" do
+      it "turns counterexamples into witnesses" do
+        path = instance_double(Array)
+        sub_result = StateMachineChecker::CheckResult
+          .new(a: StateMachineChecker::StateResult.new(false, path))
+
+        subformula = instance_double(StateMachineChecker::CTL::Not)
+        allow(subformula).to receive(:check).and_return(sub_result)
+
+        model = instance_double(StateMachineChecker::LabeledMachine, states: Set[:a])
+
+        result = described_class.new(subformula).check(model)
+        expect(result.for_state(:a)).to have_attributes(satisfied?: true, witness: path)
+      end
     end
   end
 end

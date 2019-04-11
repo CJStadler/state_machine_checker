@@ -2,7 +2,8 @@ require_relative "formula"
 
 module StateMachineChecker
   module CTL
-    # The existential until operator.
+    # The existential until operator. This is the "strong" until, it is only
+    # satisfied if the second sub-formula is eventually satisifed.
     class EU < Formula
       # @param [Formula] subformula1 holds until subformula2.
       # @param [Formula] subformula2
@@ -18,19 +19,33 @@ module StateMachineChecker
         subformula1.atoms.chain(subformula2.atoms).lazy.flat_map(&:atoms)
       end
 
-      # The states from which a state which satisfies the sub-formula is
-      # reachable.
+      # Check which states of the model have a path for which the first
+      # subformula is satisifed until the second subformula is.
       #
       # @param [LabeledMachine] model
-      # @return [Set<Symbol>]
-      def satisfying_states(model)
-        substates1 = subformula1.satisfying_states(model)
-        substates2 = subformula2.satisfying_states(model)
+      # @return [CheckResult]
+      def check(model)
+        subresult1 = subformula1.check(model)
+        subresult2 = subformula2.check(model)
 
-        substates2.each_with_object(Set.new) { |state, set|
-          predecessors = model.predecessor_states(state) { |s| substates1.include? s }
-          set.merge(predecessors)
-        }.merge(substates2)
+        result = subresult2.to_h # States satisfying sub-formula2 satisfy this.
+
+        model.states.lazy.select { |s| subresult2.for_state(s).satisfied? }.each do |end_state|
+          model.traverse(end_state, reverse: true) do |state, path|
+            if state == end_state || subresult1.for_state(state).satisfied?
+              # Don't update states that are already satisfied, to keep the
+              # simpler witness.
+              unless result[state].satisfied?
+                result[state] = StateResult.new(true, path)
+              end
+              true
+            else
+              false
+            end
+          end
+        end
+
+        CheckResult.new(result)
       end
 
       private

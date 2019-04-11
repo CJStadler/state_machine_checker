@@ -1,4 +1,6 @@
-require_relative "formula.rb"
+require_relative "formula"
+require "state_machine_checker/check_result"
+require "state_machine_checker/state_result"
 
 module StateMachineChecker
   module CTL
@@ -35,14 +37,17 @@ module StateMachineChecker
         [self]
       end
 
-      # States of the machine that satisfy this atom.
+      # Check which states of the machine are labeled with this atom.
       #
       # @param [LabeledMachine] machine
-      # @return [Set<Symbol>]
-      def satisfying_states(machine)
-        machine.states.select { |state|
-          machine.labels_for_state(state).include?(self)
-        }.to_set
+      # @return [CheckResult]
+      def check(machine)
+        result = machine.states.each_with_object({}) { |state, h|
+          satisfied = machine.labels_for_state(state).include?(self)
+          h[state] = StateResult.new(satisfied, [])
+        }
+
+        CheckResult.new(result)
       end
 
       private

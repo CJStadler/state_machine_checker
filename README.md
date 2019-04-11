@@ -23,6 +23,12 @@ Verify properties of your state machines.
   - This is fundamental to CTL because it makes statements about trees, not
     linear paths.
 
+## TODO
+
+- If we cannot generate a counterexample/witness should we return an empty array
+  or something else?
+- Is `EG p` satisfied by a p-state without any outgoing edges?
+
 ## Installation
 
 Add this line to your application's Gemfile:

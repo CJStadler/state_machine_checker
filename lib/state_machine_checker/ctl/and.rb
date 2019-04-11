@@ -21,15 +21,13 @@ module StateMachineChecker
         subformulae.lazy.flat_map(&:atoms)
       end
 
-      # States of the model that satisfy all sub-formulae.
+      # Check which states of the model are satisfied by all subformulae.
       #
       # @param [LabeledMachine] model
-      # @return [Set<Symbol>]
-      def satisfying_states(model)
-        subformulae
-          .lazy
-          .map { |f| f.satisfying_states(model) }
-          .reduce(:intersection)
+      # @return [CheckResult]
+      def check(model)
+        sub_results = subformulae.lazy.map { |f| f.check(model) }
+        sub_results.reduce(&:intersection)
       end
 
       private

@@ -46,54 +46,61 @@ RSpec.describe StateMachineChecker::FiniteStateMachine do
     end
   end
 
-  describe "#previous_states" do
-    it "returns the states leading directly to the given state" do
-      transitions = [
-        StateMachineChecker::Transition.new(:a, :b, :ab),
-        StateMachineChecker::Transition.new(:b, :c, :bc),
-        StateMachineChecker::Transition.new(:c, :a, :ca),
-        StateMachineChecker::Transition.new(:c, :b, :cb),
-        StateMachineChecker::Transition.new(:c, :c, :cc),
-        StateMachineChecker::Transition.new(:b, :d, :bd),
-      ]
-      fsm = described_class.new(:a, transitions)
-
-      expect(fsm.previous_states(:a)).to contain_exactly(:c)
-      expect(fsm.previous_states(:b)).to contain_exactly(:a, :c)
-      expect(fsm.previous_states(:c)).to contain_exactly(:b, :c)
-      expect(fsm.previous_states(:d)).to contain_exactly(:b)
+  describe "#traverse" do
+    skip "stops traversal when the block returns false for a given state" do
     end
-  end
 
-  describe "#predecessor_states" do
-    it "returns states from which the given state is reachable" do
-      transitions = [
-        StateMachineChecker::Transition.new(:a, :b, :ab),
-        StateMachineChecker::Transition.new(:b, :c, :bc),
-        StateMachineChecker::Transition.new(:c, :a, :ca),
-        StateMachineChecker::Transition.new(:c, :b, :cb),
-        StateMachineChecker::Transition.new(:c, :c, :cc),
-        StateMachineChecker::Transition.new(:b, :d, :bd),
-      ]
-      fsm = described_class.new(:a, transitions)
+    context "when reverse is false" do
+      it "yields states reachable from the given state" do
+        transitions = [
+          trans(:a, :b, :ab),
+          trans(:b, :c, :bc),
+          trans(:c, :a, :ca),
+          trans(:c, :b, :cb),
+          trans(:c, :c, :cc),
+          trans(:b, :d, :bd),
+        ]
+        fsm = described_class.new(:a, transitions)
 
-      expect(fsm.predecessor_states(:a)).to contain_exactly(:a, :b, :c)
-      expect(fsm.predecessor_states(:b)).to contain_exactly(:a, :b, :c)
-      expect(fsm.predecessor_states(:c)).to contain_exactly(:a, :b, :c)
-      expect(fsm.predecessor_states(:d)).to contain_exactly(:a, :b, :c)
+        expect { |b| fsm.traverse(:a, &b) }.to yield_successive_args(
+          [:a, []],
+          [:b, [:ab]],
+          [:c, [:ab, :bc]],
+          [:d, [:ab, :bd]]
+        )
+        expect { |b| fsm.traverse(:c, &b) }.to yield_successive_args(
+          [:c, []],
+          [:a, [:ca]],
+          [:b, [:ca, :ab]],
+          [:d, [:ca, :ab, :bd]]
+        )
+      end
     end
-  end
 
-  context "when a predicate is provided" do
-    it "returns states from which the given state is reachable while the predicate is always true" do
-      transitions = [
-        StateMachineChecker::Transition.new(:a, :b, :ab),
-        StateMachineChecker::Transition.new(:b, :c, :bc),
-        StateMachineChecker::Transition.new(:c, :d, :cd),
-      ]
-      fsm = described_class.new(:a, transitions)
-      result = fsm.predecessor_states(:d) { |s| s == :c || s == :a }
-      expect(result).to contain_exactly(:c)
+    context "when reverse is true" do
+      it "yields states from which the given state is reachable" do
+        transitions = [
+          trans(:a, :b, :ab),
+          trans(:b, :c, :bc),
+          trans(:c, :a, :ca),
+          trans(:c, :b, :cb),
+          trans(:c, :c, :cc),
+          trans(:b, :d, :bd),
+        ]
+        fsm = described_class.new(:a, transitions)
+
+        expect { |b| fsm.traverse(:a, reverse: true, &b) }.to yield_successive_args(
+          [:a, []],
+          [:c, [:ca]],
+          [:b, [:bc, :ca]]
+        )
+        expect { |b| fsm.traverse(:d, reverse: true, &b) }.to yield_successive_args(
+          [:d, []],
+          [:b, [:bd]],
+          [:a, [:ab, :bd]],
+          [:c, [:ca, :ab, :bd]]
+        )
+      end
     end
   end
 end

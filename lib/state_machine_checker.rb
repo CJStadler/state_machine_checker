@@ -1,5 +1,4 @@
 require "state_machine_checker/version"
-require "state_machine_checker/check"
 require "state_machine_checker/finite_state_machine"
 require "state_machine_checker/labeled_machine"
 require "state_machine_checker/labeling"
@@ -9,16 +8,17 @@ require "state_machine_checker/ctl/api"
 # The main entrypoint is {#check_satisfied}. The other methods are provided
 # primarily for debugging and transparency.
 module StateMachineChecker
-  # Check whether a formual is satisfied by the state machine of a given class.
+  # Check whether a formula is satisfied by the state machine of a given class.
   #
   # @param [CTL::Formula] formula the formula that should be satisfied.
   # @param instance_generator a thunk (zero-argument function) that must return
   #   an instance of an object containing a state machine. The instance must be
   #   in the initial state.
-  # @return [Check]
+  # @return [StateResult] the result for the initial state.
   def check_satisfied(formula, instance_generator)
     labeled_machine = build_labeled_machine(formula, instance_generator)
-    check_labeled_machine_satisfied(formula, labeled_machine)
+    check = formula.check(labeled_machine)
+    check.for_state(labeled_machine.initial_state)
   end
 
   # Build a labeled machine (Kripke structure) over the atomic propositions
@@ -39,15 +39,5 @@ module StateMachineChecker
       fsm,
       Labeling.new(formula.atoms, fsm, instance_generator)
     )
-  end
-
-  # Check whether a labeled machine satisfies the given formula.
-  #
-  # @param [CTL::Formula] formula
-  # @param [LabeledMachine] labeled_machine
-  # @return [Check]
-  def check_labeled_machine_satisfied(formula, labeled_machine)
-    # TODO: check that atoms of formula match labeled_machine.
-    Check.new(formula, labeled_machine)
   end
 end
