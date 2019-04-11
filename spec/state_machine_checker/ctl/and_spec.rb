@@ -17,8 +17,8 @@ RSpec.describe StateMachineChecker::CTL::And do
     end
   end
 
-  describe "#satisfying_states" do
-    it "enumerates states which satisfy all subformulae" do
+  describe "#check" do
+    it "marks states as satisfied which satisfy both subformulae" do
       a1 = StateMachineChecker::CTL::Atom.new(:foo?)
       a2 = StateMachineChecker::CTL::Atom.new(:bar?)
 

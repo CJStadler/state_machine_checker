@@ -13,8 +13,8 @@ RSpec.describe StateMachineChecker do
           EF(atom(:one?)),
           EX(atom(:two?)),
 #          EF(atom(:one?).or(atom(:two?))),
-#          EF(atom(:one?).not),
-#          EF(atom(->(x) { false })).not,
+          EF(atom(:one?).not),
+          EF(atom(->(x) { false })).not,
 #          EG(atom(->(x) { true })),
 #          EF(EG(atom(:two?))),
 #          EG(EF(atom(:two?))),
@@ -36,6 +36,7 @@ RSpec.describe StateMachineChecker do
       it "is not satisfied" do
         false_formulae = [
           EX(atom(:one?)),
+          EX(atom(:two?)).not,
           EF(atom(->(x) { false })),
 #          EF(atom(:one?).and(atom(:two?))),
 #          EG(atom(:one?)),
