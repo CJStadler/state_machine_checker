@@ -1,19 +1,37 @@
 require_relative "unary_operator"
+require "state_machine_checker/check_result"
+require "state_machine_checker/state_result"
 
 module StateMachineChecker
   module CTL
     # The existential next operator.
     class EX < UnaryOperator
-      # The states which have a transition directly to a state which satisfies
-      # the sub-formula.
+      # Check which states of the model have as a direct successor a state
+      # satisfying the subformula.
       #
       # @param [LabeledMachine] model
-      # @return [Set<Symbol>]
-      def satisfying_states(model)
-        substates = subformula.satisfying_states(model)
-        substates.each_with_object(Set.new) { |state, set|
-          set.merge(model.previous_states(state))
+      # @return [CheckResult]
+      def check(model)
+        # Initialize hash with every state unsatisfied.
+        result = model.states.each_with_object({}) { |s, h|
+          h[s] = StateResult.new(false, [])
         }
+
+        subresult = subformula.check(model)
+        model.states.each do |state|
+          sub_state_result = subresult.for_state(state)
+
+          if sub_state_result.satisfied? # Mark direct predecessors as satisfied.
+            transitions = model.transitions.select { |t| t.to == state }
+
+            transitions.each do |transition|
+              witness = [transition.name] + sub_state_result.witness
+              result[transition.from] = StateResult.new(true, witness)
+            end
+          end
+        end
+
+        CheckResult.new(result)
       end
     end
   end

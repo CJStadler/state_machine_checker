@@ -1,6 +1,8 @@
 module StateMachineChecker
   # The result of checking whether this state satisfies a formula.
   class StateResult
+    # @param [Boolean] satisfied
+    # @param [Array<Symbol>] path
     def initialize(satisfied, path)
       @satisfied = satisfied
       @path = path
@@ -15,7 +17,7 @@ module StateMachineChecker
 
     # A witness that the formula is satisfied from this state.
     #
-    # @return [Array<Transition>]
+    # @return [Array<Symbol>] an array of the names of transitions.
     def witness
       if satisfied?
         path
@@ -25,7 +27,7 @@ module StateMachineChecker
     # A counterexample demonstrating that the formula is not satisfied from this
     # state.
     #
-    # @return [Array<Transition>]
+    # @return [Array<Symbol>] an array of the names of transitions.
     def counterexample
       unless satisfied?
         path

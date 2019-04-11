@@ -15,8 +15,8 @@ RSpec.describe StateMachineChecker::CTL::EX do
     end
   end
 
-  describe "#satisfying_states" do
-    it "enumerates states which have a direct successor satisfying the subformula" do
+  describe "#check" do
+    it "marks states as satisfying which have a direct successor satisfying the subformula" do
       atom = StateMachineChecker::CTL::Atom.new(:foo?)
       ex = described_class.new(atom)
 
@@ -28,20 +28,23 @@ RSpec.describe StateMachineChecker::CTL::EX do
         e: Set[],
       }
 
-      previous_states = {
-        a: Set[],
-        b: Set[:c, :d],
-        c: Set[:a],
-        d: Set[:b],
-        e: Set[:d],
-      }
+      transitions = [
+        trans(:a, :b, :ab),
+        trans(:a, :c, :ac),
+        trans(:c, :b, :cb),
+        trans(:d, :b, :db),
+        trans(:b, :d, :bd),
+        trans(:d, :e, :de),
+      ]
 
-      machine = instance_double(StateMachineChecker::LabeledMachine)
-      allow(machine).to receive(:states).and_return(labels.keys)
-      allow(machine).to receive(:previous_states) { |s| previous_states[s] }
-      allow(machine).to receive(:labels_for_state) { |s| labels[s] }
+      machine = labeled_machine(:a, transitions, labels)
 
-      expect(ex.satisfying_states(machine)).to contain_exactly(:c, :d)
+      result = ex.check(machine)
+      expect(result.for_state(:a)).to have_attributes(satisfied?: true, witness: [:ab])
+      expect(result.for_state(:b)).to have_attributes(satisfied?: false, counterexample: [])
+      expect(result.for_state(:c)).to have_attributes(satisfied?: true, witness: [:cb])
+      expect(result.for_state(:d)).to have_attributes(satisfied?: true, witness: [:db])
+      expect(result.for_state(:e)).to have_attributes(satisfied?: false, counterexample: [])
     end
   end
 end

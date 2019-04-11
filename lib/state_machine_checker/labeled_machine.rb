@@ -24,11 +24,6 @@ module StateMachineChecker
       fsm.states
     end
 
-    # (see StateMachineChecker::FiniteStateMachine#previous_states)
-    def previous_states(state)
-      fsm.previous_states(state)
-    end
-
     # (see StateMachineChecker::FiniteStateMachine#predecessor_states)
     def predecessor_states(state)
       fsm.predecessor_states(state)
