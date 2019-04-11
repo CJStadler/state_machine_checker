@@ -49,31 +49,52 @@ module StateMachineChecker
       end
     end
 
-    # The states from which the given state is reachable.
+    # Traverse the graph from the given state. Yield each state and the
+    # transitions from it to the from_state.
     #
-    # @param [Symbol] state the name of the state to search from.
-    # @param [Block] &predicate optionally, only search as long as this is true.
-    #   The block is given a single argument, the state.
-    # @return [Set<Symbol>]
-    def predecessor_states(state, &predicate)
-      accumulator = Set.new
+    # @param [Symbol] from_state
+    # @param [true, false] reverse traverse in reverse?
+    # @yield [Symbol, Array<Symbol>]
+    def traverse(from_state, reverse: false, &block)
+      rec_traverse(from_state, [], Set[from_state], reverse, &block)
+    end
 
-      reverse_dfs(accumulator, state, &predicate)
+    def transitions_from(state)
+      transitions.select { |t| t.from == state }
+    end
 
-      accumulator
+    def transitions_to(state)
+      transitions.select { |t| t.to == state }
     end
 
     private
 
-    # Add all states reachable from state to the accumulator.
-    def reverse_dfs(accumulator, state, &predicate)
-      prevs = previous_states(state)
-      new = prevs - accumulator
+    # Traverse the graph, maintaining a stack of transitions.
+    def rec_traverse(state, stack, seen, reverse, &block)
+      # If we are reverse searching than the stack will be in reverse order.
+      path = reverse ? stack.reverse : stack.clone
+      block.yield(state, path.map(&:name))
 
-      new.each do |s|
-        if !predicate || yield(s)
-          accumulator << s
-          reverse_dfs(accumulator, s, &predicate)
+      trans = if reverse
+        transitions_to(state)
+      else
+        transitions_from(state)
+      end
+
+      trans.each do |transition|
+        next_state = if reverse
+          transition.from
+        else
+          transition.to
+        end
+
+        unless seen.include?(next_state)
+          seen.add(next_state)
+          stack.push(transition)
+
+          rec_traverse(next_state, stack, seen, reverse, &block)
+
+          stack.pop
         end
       end
     end

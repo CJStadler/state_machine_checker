@@ -24,9 +24,9 @@ module StateMachineChecker
       fsm.states
     end
 
-    # (see StateMachineChecker::FiniteStateMachine#predecessor_states)
-    def predecessor_states(state)
-      fsm.predecessor_states(state)
+    # (see StateMachineChecker::FiniteStateMachine#traverse)
+    def traverse(from_state, reverse: false, &block)
+      fsm.traverse(from_state, reverse: reverse, &block)
     end
 
     # (see StateMachineChecker::Labeling#for_state)
