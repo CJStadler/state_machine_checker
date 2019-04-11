@@ -22,9 +22,7 @@ module StateMachineChecker
           sub_state_result = subresult.for_state(state)
 
           if sub_state_result.satisfied? # Mark direct predecessors as satisfied.
-            transitions = model.transitions.select { |t| t.to == state }
-
-            transitions.each do |transition|
+            model.transitions_to(state).each do |transition|
               witness = [transition.name] + sub_state_result.witness
               result[transition.from] = StateResult.new(true, witness)
             end

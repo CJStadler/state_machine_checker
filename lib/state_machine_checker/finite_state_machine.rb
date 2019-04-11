@@ -112,9 +112,5 @@ module StateMachineChecker
         end
       end
     end
-
-    def transitions_from(state)
-      transitions.select { |t| t.from == state }
-    end
   end
 end

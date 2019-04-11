@@ -29,6 +29,16 @@ module StateMachineChecker
       fsm.traverse(from_state, reverse: reverse, &block)
     end
 
+    # (see StateMachineChecker::FiniteStateMachine#transitions_to)
+    def transitions_to(state)
+      fsm.transitions_to(state)
+    end
+
+    # (see StateMachineChecker::FiniteStateMachine#transitions_from)
+    def transitions_from(state)
+      fsm.transitions_from(state)
+    end
+
     # (see StateMachineChecker::Labeling#for_state)
     def labels_for_state(state)
       labeling.for_state(state)
