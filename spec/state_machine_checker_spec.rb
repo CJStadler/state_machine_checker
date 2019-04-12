@@ -12,6 +12,7 @@ RSpec.describe StateMachineChecker do
           EF(atom(:two?)),
           EF(atom(:one?)),
           EX(atom(:two?)),
+          EF(atom(:one?).and(EX(atom(:two?)))),
 #          EF(atom(:one?).or(atom(:two?))),
           EF(atom(:one?).not),
           EF(atom(->(x) { false })).not,
