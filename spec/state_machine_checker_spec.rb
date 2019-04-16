@@ -16,7 +16,8 @@ RSpec.describe StateMachineChecker do
 #          EF(atom(:one?).or(atom(:two?))),
           EF(atom(:one?).not),
           EF(atom(->(x) { false })).not,
-#          EG(atom(->(x) { true })),
+          EG(atom(->(x) { true })),
+          # TODO: unsure about the following 2.
 #          EF(EG(atom(:two?))),
 #          EG(EF(atom(:two?))),
 #          AG(atom(->(x) { true })),
@@ -28,6 +29,7 @@ RSpec.describe StateMachineChecker do
 
         true_formulae.each do |formula|
           result = check_satisfied(formula, -> { SimpleMachine.new })
+          require "pry"; binding.pry if !result.satisfied?
           expect(result).to be_satisfied
         end
       end
@@ -39,9 +41,9 @@ RSpec.describe StateMachineChecker do
           EX(atom(:one?)),
           EX(atom(:two?)).not,
           EF(atom(->(x) { false })),
-#          EF(atom(:one?).and(atom(:two?))),
-#          EG(atom(:one?)),
-#          EG(atom(:two?)),
+          EF(atom(:one?).and(atom(:two?))),
+          EG(atom(:one?)),
+          EG(atom(:two?)),
 #          AG(EF(atom(:one?))),
 #          AX(atom(:one?)),
 #          atom(->(x) { true }).EU(atom(->(x) { false })),

@@ -2,95 +2,122 @@ module StateMachineChecker
   module CTL
     # The existential universal operator.
     class EG < UnaryOperator
-      # the states from which there is a path for which the subformula is always
-      # true.
+      # Check which states of the model have a path for which the subformula is
+      # always satisfied
       #
       # @param [LabeledMachine] model
-      # @return [Set<Symbol>]
-      def satisfying_states(model)
-        states, out_edges, in_edges = subformula_projection(model)
-        scc = strongly_connected_components(states, out_edges, in_edges)
+      # @return [CheckResult]
+      def check(model)
+        subresult = subformula.check(model)
+        projection = subformula_projection(model, subresult)
+        scc = strongly_connected_components(projection)
 
         # Components must have more than one element, a self loop, or no
         # transitions in the original fsm.
         # TODO: this being necessary probably means we're doing something wrong.
-        scc.select! do |components|
-          c = components.first
-          components.length > 1 ||
-            out_edges[c].include?(c) ||
-            !model.transitions.any? { |t| t.from == c }
+        scc.select! do |states|
+          states.length > 1 ||
+            begin
+              c = states.first
+              transitions = model.transitions_from(c)
+
+              transitions.empty? ||
+                transitions.any? { |t| t.to == c }
+            end
         end
-        backwards_reachable_from(scc, in_edges)
+
+        build_check_result(scc, model, projection)
       end
 
       private
 
       # A graph containing only states for which the subformula is true.
-      def subformula_projection(model)
-        states = subformula.satisfying_states(model)
-        out_edges = states.each_with_object({}) { |s, h| h[s] = Set.new }
-        in_edges = states.each_with_object({}) { |s, h| h[s] = Set.new }
+      def subformula_projection(model, subresult)
+        transitions = model.transitions.select { |t|
+          subresult.for_state(t.from).satisfied? &&
+            subresult.for_state(t.to).satisfied?
+        }
 
-        model.transitions.each do |t|
-          if states.include?(t.from) && states.include?(t.to)
-            out_edges[t.from] << t.to
-            in_edges[t.to] << t.from
-          end
-        end
-        [states, out_edges, in_edges]
+        FiniteStateMachine.new(model.initial_state, transitions)
       end
 
       # Implements Kosaraju's algorithm.
-      def strongly_connected_components(states, out_edges, in_edges)
+      def strongly_connected_components(projection)
         visited = Set.new
         l = []
 
-        states.each do |s|
-          visit(s, visited, l, out_edges)
+        projection.states.each do |s|
+          visit(s, visited, l, projection)
         end
 
         assigned = Set.new
-        assignments = {} # root -> components set
+        assignments = {} # root -> set of states in component
         l.reverse_each do |s|
-          assign(s, s, assigned, assignments, in_edges)
+          assign(s, s, assigned, assignments, projection)
         end
 
         assignments.values
       end
 
-      def backwards_reachable_from(scc, in_edges)
-        reachable = Set.new
+      def build_check_result(scc, model, projection)
+        # Initialize hash with every state unsatisfied.
+        result = model.states.each_with_object({}) { |s, h|
+          h[s] = StateResult.new(false, [])
+        }
 
-        scc.each do |components|
-          components.each do |s|
-            reverse_search(s, reachable, in_edges)
+        scc.each do |component_states|
+          # For each state of the component search backwards.
+          component_states.each do |state|
+            loop_witness = scc_loop(component_states, state, projection)
+
+            projection.traverse(state, reverse: true) do |s, transitions|
+              # Ignore other states in the component.
+              if s == state || !component_states.include?(s)
+                result[s] = StateResult.new(true, transitions + loop_witness)
+              else
+                false
+              end
+            end
           end
         end
 
-        reachable
+        CheckResult.new(result)
       end
 
-      def reverse_search(s, reachable, in_edges)
-        unless reachable.include?(s)
-          reachable << s
+      # Find a series of transitions within the component_states which start and
+      # end with the given state.
+      def scc_loop(component_states, start, model)
+        model.traverse(start) do |state, path|
+          # Only search within the component states.
+          if component_states.include?(state)
+            transitions = model.transitions_from(state)
+            to_start = transitions.find { |t| t.to == start }
 
-          in_edges[s].each do |neighbor|
-            reverse_search(neighbor, reachable, in_edges)
+            if to_start
+              return path.push(to_start.name)
+            else
+              true # continue
+            end
+          else
+            false
           end
         end
+
+        []
       end
 
-      def visit(s, visited, l, out_edges)
+      def visit(s, visited, l, projection)
+        require "pry"; binding.pry if s == :f
         unless visited.include?(s)
           visited << s
-          out_edges[s].each do |neighbor|
-            visit(neighbor, visited, l, out_edges)
+          projection.transitions_from(s).each do |transition|
+            visit(transition.to, visited, l, projection)
           end
           l << s
         end
       end
 
-      def assign(s, root, assigned, assignments, in_edges)
+      def assign(s, root, assigned, assignments, projection)
         unless assigned.include?(s)
           assigned << s
 
@@ -99,8 +126,8 @@ module StateMachineChecker
           end
           assignments[root] << s
 
-          in_edges[s].each do |neighbor|
-            assign(neighbor, root, assigned, assignments, in_edges)
+          projection.transitions_to(s).each do |transition|
+            assign(transition.from, root, assigned, assignments, projection)
           end
         end
       end

@@ -47,6 +47,9 @@ RSpec.describe StateMachineChecker::FiniteStateMachine do
   end
 
   describe "#traverse" do
+    skip "stops traversal when the block returns false for a given state" do
+    end
+
     context "when reverse is false" do
       it "yields states reachable from the given state" do
         transitions = [

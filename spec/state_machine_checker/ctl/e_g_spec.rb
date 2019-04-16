@@ -17,8 +17,8 @@ RSpec.describe StateMachineChecker::CTL::EG do
     end
   end
 
-  describe "#satisfying_states" do
-    it "returns states which have a path for which the subformula is always true" do
+  describe "check" do
+    it "marks states as satisfying from which there is a path where the subformula is always satisfied" do
       atom = StateMachineChecker::CTL::Atom.new(:foo?)
       eg = described_class.new(atom)
 
@@ -31,22 +31,25 @@ RSpec.describe StateMachineChecker::CTL::EG do
         f: Set[atom],
       }
 
-      labeling = instance_double(StateMachineChecker::Labeling)
-      allow(labeling).to receive(:for_state) { |s| labels[s] }
-
       transitions = [
-        [:a, :b],
-        [:b, :c],
-        [:c, :b],
-        [:a, :d],
-        [:d, :e],
-        [:e, :f],
-      ].map { |from, to| StateMachineChecker::Transition.new(from, to, "#{from}_#{to}") }
+        trans(:a, :b, :ab),
+        trans(:b, :c, :bc),
+        trans(:c, :b, :cb),
+        trans(:a, :d, :ad),
+        trans(:d, :e, :de),
+        trans(:e, :f, :ef),
+      ]
 
-      fsm = StateMachineChecker::FiniteStateMachine.new(:a, transitions)
-      machine = StateMachineChecker::LabeledMachine.new(fsm, labeling)
+      machine = labeled_machine(:a, transitions, labels)
 
-      expect(eg.satisfying_states(machine)).to contain_exactly(:a, :b, :c, :f)
+      result = eg.check(machine)
+      expect(result.for_state(:a)).to have_attributes(satisfied?: true, witness: [:ab, :bc, :cb])
+      expect(result.for_state(:b)).to have_attributes(satisfied?: true, witness: [:bc, :cb])
+      expect(result.for_state(:c)).to have_attributes(satisfied?: true, witness: [:cb, :bc])
+      expect(result.for_state(:d)).to have_attributes(satisfied?: false, counterexample: [])
+      expect(result.for_state(:e)).to have_attributes(satisfied?: false, counterexample: [])
+      # TODO: Is this the correct result for f?
+      expect(result.for_state(:f)).to have_attributes(satisfied?: false, counterexample: [])
     end
   end
 end

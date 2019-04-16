@@ -50,7 +50,9 @@ module StateMachineChecker
     end
 
     # Traverse the graph from the given state. Yield each state and the
-    # transitions from it to the from_state.
+    # transitions from it to the from_state. If the result of the block is falsey
+    # for any state then the search will not continue to the children of that
+    # state.
     #
     # @param [Symbol] from_state
     # @param [true, false] reverse traverse in reverse?
@@ -73,28 +75,30 @@ module StateMachineChecker
     def rec_traverse(state, stack, seen, reverse, &block)
       # If we are reverse searching than the stack will be in reverse order.
       path = reverse ? stack.reverse : stack.clone
-      block.yield(state, path.map(&:name))
+      continue = block.yield(state, path.map(&:name)) != false
 
-      trans = if reverse
-        transitions_to(state)
-      else
-        transitions_from(state)
-      end
-
-      trans.each do |transition|
-        next_state = if reverse
-          transition.from
+      if continue
+        trans = if reverse
+          transitions_to(state)
         else
-          transition.to
+          transitions_from(state)
         end
 
-        unless seen.include?(next_state)
-          seen.add(next_state)
-          stack.push(transition)
+        trans.each do |transition|
+          next_state = if reverse
+            transition.from
+          else
+            transition.to
+          end
 
-          rec_traverse(next_state, stack, seen, reverse, &block)
+          unless seen.include?(next_state)
+            seen.add(next_state)
+            stack.push(transition)
 
-          stack.pop
+            rec_traverse(next_state, stack, seen, reverse, &block)
+
+            stack.pop
+          end
         end
       end
     end
