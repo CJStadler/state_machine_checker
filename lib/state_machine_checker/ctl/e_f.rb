@@ -10,12 +10,8 @@ module StateMachineChecker
       # @param [LabeledMachine] model
       # @return [CheckResult]
       def check(model)
-        # Initialize hash with every state unsatisfied.
-        result = model.states.each_with_object({}) { |s, h|
-          h[s] = StateResult.new(false, [])
-        }
-
         subresult = subformula.check(model)
+        result = subresult.to_h
         model.states.each do |state|
           sub_state_result = subresult.for_state(state)
 

@@ -26,16 +26,8 @@ module StateMachineChecker
       # @param [LabeledMachine] model
       # @return [CheckResult]
       def check(model)
-        sub_results = subformulae.map { |f| f.check(model) }
-
-        result = {}
-        model.states.each do |state|
-          state_results = sub_results.lazy.map { |r| r.for_state(state) }
-
-          result[state] = state_results.reduce(&:and)
-        end
-
-        CheckResult.new(result)
+        sub_results = subformulae.lazy.map { |f| f.check(model) }
+        sub_results.reduce(&:intersection)
       end
 
       private

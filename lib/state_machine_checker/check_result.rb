@@ -6,8 +6,6 @@ module StateMachineChecker
       @result_hash = result_hash
     end
 
-    attr_reader :result_hash
-
     # The result for a particular state.
     #
     # @param [Symbol] state
@@ -17,7 +15,26 @@ module StateMachineChecker
     end
 
     def to_h
-      result_hash
+      result_hash.clone
     end
+
+    def union(other)
+      map { |state, result| result.or(other.for_state(state)) }
+    end
+
+    def intersection(other)
+      map { |state, result| result.and(other.for_state(state)) }
+    end
+
+    def map(&block)
+      entries = result_hash.map { |state, result|
+        [state, block.yield(state, result)]
+      }
+      CheckResult.new(Hash[entries])
+    end
+
+    private
+
+    attr_reader :result_hash
   end
 end
