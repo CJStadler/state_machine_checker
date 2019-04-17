@@ -107,7 +107,6 @@ module StateMachineChecker
       end
 
       def visit(s, visited, l, projection)
-        require "pry"; binding.pry if s == :f
         unless visited.include?(s)
           visited << s
           projection.transitions_from(s).each do |transition|

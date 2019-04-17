@@ -48,7 +48,6 @@ RSpec.describe StateMachineChecker::CTL::EG do
       expect(result.for_state(:c)).to have_attributes(satisfied?: true, witness: [:cb, :bc])
       expect(result.for_state(:d)).to have_attributes(satisfied?: false, counterexample: [])
       expect(result.for_state(:e)).to have_attributes(satisfied?: false, counterexample: [])
-      # TODO: Is this the correct result for f?
       expect(result.for_state(:f)).to have_attributes(satisfied?: false, counterexample: [])
     end
   end

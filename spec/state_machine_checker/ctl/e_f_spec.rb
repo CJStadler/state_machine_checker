@@ -27,9 +27,11 @@ RSpec.describe StateMachineChecker::CTL::EF do
         d: Set[],
         e: Set[],
         f: Set[],
+        g: Set[atom],
       }
 
       transitions = [
+        trans(:a, :g, :ag),
         trans(:a, :b, :ab),
         trans(:b, :b, :bb),
         trans(:b, :c, :bc),
@@ -47,6 +49,7 @@ RSpec.describe StateMachineChecker::CTL::EF do
       expect(result.for_state(:d)).to have_attributes(satisfied?: false, counterexample: [])
       expect(result.for_state(:e)).to have_attributes(satisfied?: false, counterexample: [])
       expect(result.for_state(:f)).to have_attributes(satisfied?: false, counterexample: [])
+      expect(result.for_state(:g)).to have_attributes(satisfied?: true, witness: [])
     end
   end
 end
