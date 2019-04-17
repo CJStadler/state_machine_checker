@@ -17,10 +17,11 @@ RSpec.describe StateMachineChecker do
           EF(atom(:one?).not),
           EF(atom(->(x) { false })).not,
           EG(atom(->(x) { true })),
+          EG(EF(atom(:two?))),
 #          AG(atom(->(x) { true })),
 #          AF(atom(:two?)),
 #          AX(atom(:two?)),
-#          atom(:one?).EU(atom(:two?)),
+          atom(:one?).EU(atom(:two?)),
 #          atom(:one?).AU(atom(:two?)),
         ]
 
@@ -41,10 +42,9 @@ RSpec.describe StateMachineChecker do
           EG(atom(:one?)),
           EG(atom(:two?)),
           EF(EG(atom(:two?))),
-          EG(EF(atom(:two?))),
 #          AG(EF(atom(:one?))),
 #          AX(atom(:one?)),
-#          atom(->(x) { true }).EU(atom(->(x) { false })),
+          atom(->(x) { true }).EU(atom(->(x) { false })),
 #          atom(->(x) { true }).AU(atom(->(x) { false })),
         ]
 
