@@ -52,7 +52,7 @@ RSpec.describe StateMachineChecker::CTL::And do
         allow(f1).to receive(:check).and_return(f1_result)
 
         f2_result = StateMachineChecker::CheckResult
-          .new(StateMachineChecker::StateResult.new(true, []))
+          .new(a: StateMachineChecker::StateResult.new(true, []))
         f2 = instance_double(StateMachineChecker::CTL::EX)
         allow(f2).to receive(:check).and_return(f2_result)
 

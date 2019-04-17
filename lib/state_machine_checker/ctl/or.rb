@@ -29,9 +29,8 @@ module StateMachineChecker
         result = {}
         model.states.each do |state|
           state_results = sub_results.lazy.map { |r| r.for_state(state) }
-          satisfying = state_results.find(&:satisfied?)
 
-          result[state] = satisfying || state_results.first
+          result[state] = state_results.reduce(&:or)
         end
 
         CheckResult.new(result)

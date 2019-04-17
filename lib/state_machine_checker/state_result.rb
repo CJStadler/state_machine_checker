@@ -34,6 +34,22 @@ module StateMachineChecker
       end
     end
 
+    def or(other)
+      if satisfied?
+        self
+      else
+        other
+      end
+    end
+
+    def and(other)
+      if !other.satisfied?
+        other
+      else
+        self
+      end
+    end
+
     private
 
     attr_reader :satisfied, :path
