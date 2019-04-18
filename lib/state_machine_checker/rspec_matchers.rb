@@ -29,14 +29,14 @@ module StateMachineChecker
 
       def failure_message
         <<~MESSAGE
-          Expected machine to satisfy "#{formula}" but it does not.
+          Expected state machine for #{machine_name} to satisfy "#{formula}" but it does not.
           Counterexample: #{result.counterexample}
         MESSAGE
       end
 
       def failure_message_when_negated
         <<~MESSAGE
-          Expected machine not to satisfy #{formula} but it does.
+          Expected state machine for #{machine_name} not to satisfy "#{formula}" but it does.
           Witness: #{result.witness}
         MESSAGE
       end
@@ -48,6 +48,13 @@ module StateMachineChecker
       private
 
       attr_reader :instance_generator, :formula, :result
+
+      def machine_name
+        # TODO: This assumes state_machines gem
+        klass = instance_generator.call.class
+        gem_machine = klass.state_machine
+        "#{klass}##{gem_machine.name}"
+      end
     end
   end
 end
