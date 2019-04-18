@@ -14,28 +14,42 @@ module StateMachineChecker
         Atom.new(method_name_or_fn)
       end
 
+      def neg(subformula)
+        Not.new(atom_or_formula(subformula))
+      end
+
       def EF(subformula) # rubocop:disable Naming/MethodName
-        CTL::EF.new(subformula)
+        CTL::EF.new(atom_or_formula(subformula))
       end
 
       def EX(subformula) # rubocop:disable Naming/MethodName
-        CTL::EX.new(subformula)
+        CTL::EX.new(atom_or_formula(subformula))
       end
 
       def EG(subformula) # rubocop:disable Naming/MethodName
-        CTL::EG.new(subformula)
+        CTL::EG.new(atom_or_formula(subformula))
       end
 
       def AF(subformula) # rubocop:disable Naming/MethodName
-        CTL::EG.new(subformula.not).not
+        neg(CTL::EG.new(neg(atom_or_formula(subformula))))
       end
 
       def AX(subformula) # rubocop:disable Naming/MethodName
-        CTL::EX.new(subformula.not).not
+        neg(CTL::EX.new(neg(atom_or_formula(subformula))))
       end
 
       def AG(subformula) # rubocop:disable Naming/MethodName
-        CTL::EF.new(subformula.not).not
+        neg(CTL::EF.new(neg(atom_or_formula(subformula))))
+      end
+
+      private
+
+      def atom_or_formula(subformula)
+        if subformula.is_a? Formula
+          subformula
+        else
+          atom(subformula)
+        end
       end
     end
   end

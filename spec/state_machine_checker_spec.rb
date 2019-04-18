@@ -9,20 +9,20 @@ RSpec.describe StateMachineChecker do
     context "when the formula is satisfied" do
       it "is satisfied" do
         true_formulae = [
-          EF(atom(:two?)),
-          EF(atom(:one?)),
-          EX(atom(:two?)),
-          EF(atom(:one?).and(EX(atom(:two?)))),
-          EF(atom(:one?).or(atom(:two?))),
-          EF(atom(:one?).not),
-          EF(atom(->(x) { false })).not,
-          EG(atom(->(x) { true })),
-          EG(EF(atom(:two?))),
-          AG(atom(->(x) { true })),
-          AF(atom(:two?)),
-          AX(atom(:two?)),
-          atom(:one?).EU(atom(:two?)),
-          atom(:one?).AU(atom(:two?)),
+          EF(:two?),
+          EF(:one?),
+          EX(:two?),
+          EF(atom(:one?).and(EX(:two?))),
+          EF(atom(:one?).or(:two?)),
+          EF(neg(:one?)),
+          neg(EF(->(x) { false })),
+          EG(->(x) { true }),
+          EG(EF(:two?)),
+          AG(->(x) { true }),
+          AF(:two?),
+          AX(:two?),
+          atom(:one?).EU(:two?),
+          atom(:one?).AU(:two?),
         ]
 
         true_formulae.each do |formula|
@@ -35,17 +35,17 @@ RSpec.describe StateMachineChecker do
     context "when the formula is not satisfied" do
       it "is not satisfied" do
         false_formulae = [
-          EX(atom(:one?)),
-          EX(atom(:two?)).not,
-          EF(atom(->(x) { false })),
-          EF(atom(:one?).and(atom(:two?))),
-          EG(atom(:one?)),
-          EG(atom(:two?)),
-          EF(EG(atom(:two?))),
-          AG(EF(atom(:one?))),
-          AX(atom(:one?)),
-          atom(->(x) { true }).EU(atom(->(x) { false })),
-          atom(->(x) { true }).AU(atom(->(x) { false })),
+          EX(:one?),
+          neg(EX(:two?)),
+          EF(->(x) { false }),
+          EF(atom(:one?).and(:two?)),
+          EG(:one?),
+          EG(:two?),
+          EF(EG(:two?)),
+          AG(EF(:one?)),
+          AX(:one?),
+          atom(->(x) { true }).EU(->(x) { false }),
+          atom(->(x) { true }).AU(->(x) { false }),
         ]
 
         false_formulae.each do |formula|
