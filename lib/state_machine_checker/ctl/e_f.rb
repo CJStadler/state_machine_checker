@@ -25,6 +25,10 @@ module StateMachineChecker
 
         CheckResult.new(result)
       end
+
+      def to_s
+        "EF #{subformula}"
+      end
     end
   end
 end

@@ -45,4 +45,20 @@ RSpec.describe StateMachineChecker::CTL::Atom do
       expect(result.for_state(:c)).not_to be_satisfied
     end
   end
+
+  describe "#to_s" do
+    context "when constructed from a symbol" do
+      it "returns the symbol as a string" do
+        a = described_class.new(:foo?)
+        expect(a.to_s).to eq("foo?")
+      end
+    end
+
+    context "when constructed from an anonymous function" do
+      it "returns a unique identifier" do
+        a = described_class.new(->(x) { x.even? })
+        expect(a.to_s).to match(/\Aatom#\d+\z/)
+      end
+    end
+  end
 end

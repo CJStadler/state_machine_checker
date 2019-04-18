@@ -83,4 +83,14 @@ RSpec.describe StateMachineChecker::CTL::And do
       end
     end
   end
+
+  describe "#to_s" do
+    it "returns the formula as a string" do
+      a1 = StateMachineChecker::CTL::Atom.new(:foo?)
+      a2 = StateMachineChecker::CTL::Atom.new(:bar?)
+      a3 = StateMachineChecker::CTL::Atom.new(:woo?)
+      f = described_class.new([a1, a2, a3])
+      expect(f.to_s).to eq("foo? ∧ bar? ∧ woo?")
+    end
+  end
 end

@@ -14,7 +14,7 @@ module StateMachineChecker
       end
 
       def description
-        "satisfy #{formula}"
+        "satisfy \"#{formula}\""
       end
 
       def diffable?
@@ -29,7 +29,7 @@ module StateMachineChecker
 
       def failure_message
         <<~MESSAGE
-          Expected machine to satisfy #{formula} but it does not.
+          Expected machine to satisfy "#{formula}" but it does not.
           Counterexample: #{result.counterexample}
         MESSAGE
       end

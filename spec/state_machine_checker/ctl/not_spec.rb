@@ -72,4 +72,12 @@ RSpec.describe StateMachineChecker::CTL::Not do
       end
     end
   end
+
+  describe "#to_s" do
+    it "returns the formula as a string" do
+      atom = StateMachineChecker::CTL::Atom.new(:foo?)
+      f = described_class.new(atom)
+      expect(f.to_s).to eq("¬ foo?")
+    end
+  end
 end

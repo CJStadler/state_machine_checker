@@ -12,11 +12,11 @@ module StateMachineChecker
       #   Atom.new(:shipped?)
       #   Atom.new(->(x) { x.shipped? })
       def initialize(method_name_or_fn)
-        @fn = if method_name_or_fn.respond_to?(:call)
-          method_name_or_fn
+        @name, @fn = if method_name_or_fn.respond_to?(:call)
+          ["atom##{object_id}", method_name_or_fn]
         else
           # Create a function which will send the given method name.
-          method_name_or_fn.to_proc
+          [method_name_or_fn.to_s, method_name_or_fn.to_proc]
         end
       end
 
@@ -50,9 +50,13 @@ module StateMachineChecker
         CheckResult.new(result)
       end
 
+      def to_s
+        name
+      end
+
       private
 
-      attr_reader :fn
+      attr_reader :fn, :name
     end
   end
 end

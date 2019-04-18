@@ -29,6 +29,10 @@ module StateMachineChecker
         build_check_result(scc, model, projection)
       end
 
+      def to_s
+        "EG #{subformula}"
+      end
+
       private
 
       # A graph containing only states for which the subformula is true.

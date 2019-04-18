@@ -31,6 +31,10 @@ module StateMachineChecker
 
         CheckResult.new(result)
       end
+
+      def to_s
+        "EX #{subformula}"
+      end
     end
   end
 end

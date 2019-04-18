@@ -30,6 +30,10 @@ module StateMachineChecker
         sub_results.reduce(&:intersection)
       end
 
+      def to_s
+        subformulae.map(&:to_s).join(" ∧ ")
+      end
+
       private
 
       attr_reader :subformulae

@@ -28,6 +28,10 @@ module StateMachineChecker
         sub_results.reduce(&:union)
       end
 
+      def to_s
+        subformulae.map(&:to_s).join(" ∨ ")
+      end
+
       private
 
       attr_reader :subformulae

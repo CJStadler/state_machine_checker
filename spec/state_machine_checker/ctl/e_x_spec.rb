@@ -47,4 +47,12 @@ RSpec.describe StateMachineChecker::CTL::EX do
       expect(result.for_state(:e)).to have_attributes(satisfied?: false, counterexample: [])
     end
   end
+
+  describe "#to_s" do
+    it "returns the formula as a string" do
+      atom = StateMachineChecker::CTL::Atom.new(:foo?)
+      f = described_class.new(atom)
+      expect(f.to_s).to eq("EX foo?")
+    end
+  end
 end
