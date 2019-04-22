@@ -29,7 +29,7 @@ module StateMachineChecker
       end
 
       def to_s
-        subformulae.map(&:to_s).join(" ∨ ")
+        subformulae.map(&:to_s).map { |s| "(#{s})" }.join(" ∨ ")
       end
 
       private

@@ -30,7 +30,7 @@ module StateMachineChecker
       end
 
       def to_s
-        "EG #{subformula}"
+        "EG(#{subformula})"
       end
 
       private

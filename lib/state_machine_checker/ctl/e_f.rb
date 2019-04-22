@@ -27,7 +27,7 @@ module StateMachineChecker
       end
 
       def to_s
-        "EF #{subformula}"
+        "EF(#{subformula})"
       end
     end
   end

@@ -29,7 +29,7 @@ module StateMachineChecker
       end
 
       def to_s
-        "¬ #{subformula}"
+        "¬(#{subformula})"
       end
     end
   end

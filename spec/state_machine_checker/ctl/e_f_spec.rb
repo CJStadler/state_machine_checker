@@ -57,7 +57,7 @@ RSpec.describe StateMachineChecker::CTL::EF do
     it "returns the formula as a string" do
       atom = StateMachineChecker::CTL::Atom.new(:foo?)
       f = described_class.new(atom)
-      expect(f.to_s).to eq("EF foo?")
+      expect(f.to_s).to eq("EF(foo?)")
     end
   end
 end

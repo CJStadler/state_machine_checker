@@ -33,7 +33,7 @@ module StateMachineChecker
       end
 
       def to_s
-        "EX #{subformula}"
+        "EX(#{subformula})"
       end
     end
   end
