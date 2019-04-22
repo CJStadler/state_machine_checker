@@ -1,24 +1,10 @@
-require_relative "formula"
+require_relative "binary_formula"
 
 module StateMachineChecker
   module CTL
     # The existential until operator. This is the "strong" until, it is only
     # satisfied if the second sub-formula is eventually satisifed.
-    class EU < Formula
-      # @param [Formula] subformula1 holds until subformula2.
-      # @param [Formula] subformula2
-      def initialize(subformula1, subformula2)
-        @subformula1 = subformula1
-        @subformula2 = subformula2
-      end
-
-      # Return an enumerator over the atoms of the sub-formulas.
-      #
-      # @return [Enumerator<Atom>]
-      def atoms
-        subformula1.atoms.chain(subformula2.atoms).lazy.flat_map(&:atoms)
-      end
-
+    class EU < BinaryFormula
       # Check which states of the model have a path for which the first
       # subformula is satisifed until the second subformula is.
       #
@@ -48,9 +34,9 @@ module StateMachineChecker
         CheckResult.new(result)
       end
 
-      private
-
-      attr_reader :subformula1, :subformula2
+      def to_s
+        "(#{subformula1}) EU (#{subformula2})"
+      end
     end
   end
 end

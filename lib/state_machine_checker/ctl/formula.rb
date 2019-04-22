@@ -16,7 +16,7 @@ module StateMachineChecker
 
       # Logical implication
       def implies(other_subformula)
-        self.and(atom_or_formula(other_subformula)).or(Not.new(self))
+        Implication.new(self, atom_or_formula(other_subformula))
       end
 
       # The existential until operator.
@@ -25,9 +25,7 @@ module StateMachineChecker
       end
 
       def AU(end_formula) # rubocop:disable Naming/MethodName
-        end_formula = atom_or_formula(end_formula)
-        Not.new(Not.new(end_formula).EU(Not.new(self.or(end_formula)))
-          .or(EG.new(Not.new(end_formula))))
+        AU.new(self, atom_or_formula(end_formula))
       end
 
       private

@@ -27,7 +27,7 @@ Verify properties of your state machines.
 
 - If we cannot generate a counterexample/witness should we return an empty array
   or something else?
-- Is `EG p` satisfied by a p-state without any outgoing edges?
+- Tests for A modalities, Implication, and Or.
 
 ## Installation
 
