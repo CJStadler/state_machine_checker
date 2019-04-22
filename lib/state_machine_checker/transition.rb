@@ -19,9 +19,10 @@ module StateMachineChecker
     # the transition was successful.
     #
     # @param instance the instance to execute the transition on.
-    # @return [true, false] whether the transition succeeded.
     def execute(instance)
-      instance.public_send(name)
+      # TODO: calling the "bang" version (to raise on failure) is specific to
+      # the state_machines gem.
+      instance.public_send("#{name}!")
     end
 
     def ==(other)

@@ -27,7 +27,8 @@ Verify properties of your state machines.
 
 - If we cannot generate a counterexample/witness should we return an empty array
   or something else?
-- Tests for A modalities, Implication, and Or.
+- Specs for A modalities, Implication, and Or.
+- Spec for Transition.
 
 ## Installation
 
