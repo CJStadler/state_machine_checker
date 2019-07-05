@@ -1,34 +1,67 @@
-# StateMachineChecker
+# State Machine Checker
 
-Verify properties of your state machines.
+Verify (as in prove) properties of your state machines.
 
-## Restrictions
+Given a definition of a state machine and a CTL formula this library performs
+model checking to verify whether the formula is satisfied by the state machine.
 
-- The initial state must be set statically.
+For example, let's say we have implemented a very simple state machine to
+represent credit card payments:
 
-## Notes
+```rb
+class Payment
+  state_machine initial: :checkout do
+    event :started_processing do
+      transition from: [:checkout], to: :processing
+    end
 
-- How to construct counterexamples/witnesses?
-  - If we use ENF then just have witnesses.
-  - For each formula we compute a set of satisfying states. For each of these
-    states we also keep a witness path.
-  - The witness path is then built recursively?
+    event :finished_processing do
+      transition from: [:processing], to: :completed
+    end
 
-- A witness can't be a single path, but must be provided separately for each
-  subformula right?
-  - E.g. in `EF (EF p and EF q)`. `EF p` and `EF q` will have different
-    witnesses.
-  - nuXmv just gives a witness/counterexample as a path, which isn't very
-    helpful in these cases.
-  - This is fundamental to CTL because it makes statements about trees, not
-    linear paths.
+    event :processing_failed do
+      transition from: [:processing], to: :failed
+    end
+  end
+end
+```
 
-## TODO
+We might want to verify that every `Payment` eventually completes. This property
+can  be represented as the CTL Formula `AF completed` — for all paths (`A`)
+eventually (`F`) `completed` is true. `state_machine_checker` includes a DSL for
+writing CTL properties and a `rspec` matcher, so we can write a spec to verify
+this property:
 
-- If we cannot generate a counterexample/witness should we return an empty array
-  or something else?
-- Specs for A modalities, Implication, and Or.
-- Spec for Transition.
+```rb
+it "eventually completes" do
+  formula = AF(:completed?)
+  expect { Payment.new }.to satisfy(formula)
+end
+```
+
+This spec will fail and give the following message:
+
+```
+1) Payment eventually completes
+     Failure/Error: expect { Payment.new }.to satisfy(formula)
+
+       Expected state machine for Payment#state to satisfy "AF(completed?)" but it does not.
+       Counterexample: [:started_processing, :processing_failed]
+```
+
+A counterexample is given as a series of events: if `started_processing` is
+followed by `processing_failed` then a `Payment` will be in the `failed` state
+and will never reach `completed`.
+
+For more examples see [https://github.com/CJStadler/state_machine_checker/blob/master/spec/payment_spec.rb].
+
+## Limitations
+
+- The state machine must be static — once the definition is parsed no states or
+  transitions should be added or removed.
+- Atoms should only depend on the current state.
+- Only the [state_machines](https://rubygems.org/gems/state_machines) gem is
+  currently supported, but adapters for other state machine gems could be added.
 
 ## Installation
 
@@ -45,10 +78,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install state_machine_checker
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
