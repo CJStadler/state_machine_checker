@@ -1,5 +1,7 @@
 # State Machine Checker
 
+[![Gem Version](https://badge.fury.io/rb/state_machine_checker.svg)](https://badge.fury.io/rb/state_machine_checker)
+
 Verify (as in prove) properties of your state machines.
 
 Given a definition of a state machine and a [CTL
