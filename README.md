@@ -2,8 +2,10 @@
 
 Verify (as in prove) properties of your state machines.
 
-Given a definition of a state machine and a CTL formula this library performs
-model checking to verify whether the formula is satisfied by the state machine.
+Given a definition of a state machine and a [CTL
+formula](https://en.wikipedia.org/wiki/Computation_tree_logic) this library
+performs model checking to verify whether the formula is satisfied by the state
+machine.
 
 For example, let's say we have implemented a very simple state machine to
 represent credit card payments:
