@@ -53,7 +53,7 @@ A counterexample is given as a series of events: if `started_processing` is
 followed by `processing_failed` then a `Payment` will be in the `failed` state
 and will never reach `completed`.
 
-For more examples see [https://github.com/CJStadler/state_machine_checker/blob/master/spec/payment_spec.rb].
+For more examples see [payment_spec.rb](https://github.com/CJStadler/state_machine_checker/blob/master/spec/payment_spec.rb).
 
 ## Limitations
 
