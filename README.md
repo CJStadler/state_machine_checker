@@ -57,6 +57,8 @@ and will never reach `completed`.
 
 For more examples see [payment_spec.rb](https://github.com/CJStadler/state_machine_checker/blob/master/spec/payment_spec.rb).
 
+For a more in depth discussion and implementation details see [the paper](https://github.com/CJStadler/state_machine_checker/blob/master/paper.pdf).
+
 ## Limitations
 
 - The state machine must be static — once the definition is parsed no states or
