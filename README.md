@@ -85,6 +85,10 @@ Or install it yourself as:
 
     $ gem install state_machine_checker
 
+## Documentation
+
+[https://www.rubydoc.info/github/CJStadler/state_machine_checker](https://www.rubydoc.info/github/CJStadler/state_machine_checker)
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
