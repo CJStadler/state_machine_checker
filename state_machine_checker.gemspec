@@ -43,5 +43,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "state_machines", "~> 0.5.0"
   spec.add_development_dependency "standard", "~> 0.0.36"
   spec.add_development_dependency "pry"
-  spec.add_development_dependency "yard", "~> 0.9.18"
+  spec.add_development_dependency "yard", ">= 0.9.20"
 end
