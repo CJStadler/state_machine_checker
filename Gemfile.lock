@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    state_machine_checker (0.1.0)
+    state_machine_checker (0.1.1)
 
 GEM
   remote: https://rubygems.org/
